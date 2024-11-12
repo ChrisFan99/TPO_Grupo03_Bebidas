@@ -15,12 +15,31 @@ public class GestorBebidas {
 
     public void agregarProducto(Producto produ){
         bebidas.add(produ);
+        System.out.println("El producto se agrego correctamente");
     }
 
+    public void removerProducto(Producto produ){
+        bebidas.remove(produ);
+        System.out.println("El producto se removio correctamente");
+    }
 
-    public void clear(){
-        bebidas.clear();
-        System.out.println("Collecion eliminada correctamente");
+    public String verInformacionDeBebidas(String nombreProducto){
+        for (Producto produ : bebidas){
+            if (produ.getNombre().equals(nombreProducto)){
+                return "1." + produ.getNombre() + "-" +produ.getLitros() + "-" + produ.getCantidad() + "-" + produ.esAlcoholica() + "-" + produ.getVenta() + "-" + produ.getCosto();
+            }
+        }
+        return "No se a encontrado una bebida con ese nombre";
+    }
+
+    public String verListadoBebidas(){
+        String productoIndividual;
+        String listado = "";
+        for (Producto produ : bebidas){
+            productoIndividual = "1." + produ.getNombre() + "-" +produ.getLitros() + "-" + produ.getCantidad() + "-" + produ.esAlcoholica()+"\n";
+            listado = listado + productoIndividual;
+        }
+        return listado;
     }
 
     /*public boolean estaContenido(String nombre){

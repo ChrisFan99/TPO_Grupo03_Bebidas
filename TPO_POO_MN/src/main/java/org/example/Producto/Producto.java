@@ -25,4 +25,32 @@ public class Producto {
     public boolean esAlcoholica() {
         return esAlcoholica;
     }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public float getLitros() {
+        return litros;
+    }
+
+    public boolean isEsAlcoholica() {
+        return esAlcoholica;
+    }
+
+    public float getVenta() {
+        return venta;
+    }
+
+    public float getCosto() {
+        return costo;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
 }
