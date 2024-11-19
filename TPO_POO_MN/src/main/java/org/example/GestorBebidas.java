@@ -131,4 +131,15 @@ public class GestorBebidas {
             }
         }
     }
+
+    public void modificarCombo(int posicion, Producto producto){
+        if (posicion < 1 || posicion > combos.size()){
+            throw new ComboLimiteAlcanzadoException("Seleccionó una opción fuera del rango, vuelva a ingresar el combo a modificar");
+        }
+        for(Producto productoIteracion : combos.get(posicion).getProductos()){
+            if (productoIteracion.getNombre().equals(producto.getNombre())){
+
+            }
+        }
+    }
 }

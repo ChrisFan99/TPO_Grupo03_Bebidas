@@ -92,7 +92,7 @@ public class Main {
                     break;
 
                 case 10:
-                    //Solicitar nombre del producto, mostrar en que combos esta y seleccionar el combo a modificar, luego guardarlo en el arreglo
+                    modificarCombo(productos, input);
                     break;
 
                 default:
@@ -525,13 +525,13 @@ public class Main {
 
     //Case9
     private static void removerCombo(GestorBebidas productos, Scanner input){
-        System.out.println("\nSelecciono la opcion 'Remover combo'");
+        System.out.println("\nSeleccionó la opción 'Remover combo'");
         System.out.println("--------------------------------------------------------------------------------");
         boolean bandera9 = false;
         do {
             try {
                 productos.verListadoCombos();
-                System.out.println("Ingrese la posicion del combo que le gustaria eliminar: ");
+                System.out.println("Ingrese la posición del combo que le gustaría eliminar: ");
                 int posicion = input.nextInt();
 
                 input.nextLine();  // limpiar el buffer
@@ -549,6 +549,35 @@ public class Main {
                 bandera9 = true;
             }
         }while (bandera9);
+    }
+
+    //Case10
+    private static void modificarCombo(GestorBebidas productos, Scanner input){
+        System.out.println("\nSeleccionó la opción 'Remover combo'");
+        System.out.println("--------------------------------------------------------------------------------");
+        boolean bandera10 = false;
+        do {
+            try {
+                productos.verListadoCombos();
+                System.out.println("Ingrese la posición del combo que le gustaria modificar: ");
+                int posicion = input.nextInt();
+                input.nextLine();  // limpiar el buffer
+                System.out.print("Ingrese el producto del combo que le gustaria modificar: ");
+                String producto = input.nextInt();
+                input.nextLine();  // limpiar el buffer
+                productos.modificarCombo(posicion, producto);
+                bandera10 = false;
+
+            } catch (InputMismatchException exception) {
+                System.out.println("Ingrese el tipo de dato solicitado, reiniciando opción 10........");
+                input.nextLine(); // Limpiar el buffer
+                bandera10 = true;
+            }catch (ProductoNoEncontradoException | ProductoExistenteException | ComboLimiteAlcanzadoException exception) {
+                System.out.println("Error: " + exception.getMessage());
+                input.nextLine(); // Limpiar el buffer
+                bandera10 = true;
+            }
+        }while (bandera10);
     }
     
 }
