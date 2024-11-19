@@ -13,7 +13,7 @@ public class ComboCompleto extends ComboEnLaPera{
 
     @Override
     public void agregarProducto(Producto unProducto, int cantidad) {
-        Producto productoAgregar = unProducto.recrearProductoParaCombo(cantidad);
+        Producto productoAgregar = unProducto.recrearProductoParaCombo(cantidad, unProducto.getNombre());
         validarCantidadDeProductos(18);
 
         if (productoAgregar.esAlcoholica() && contarBebidasTipo(productoAgregar.esAlcoholica()) + productoAgregar.getCantidad() <= 6) {

@@ -1,7 +1,11 @@
 package org.example;
 import org.example.Combo.Combo;
+import org.example.Combo.Combo1x1;
+import org.example.Combo.ComboCompleto;
+import org.example.Combo.ComboEnLaPera;
 import org.example.Exception.ComboLimiteAlcanzadoException;
 import org.example.Exception.ProductoExistenteException;
+import org.example.Exception.ProductoNoEncontradoException;
 import org.example.Producto.Producto;
 
 import java.util.ArrayList;
@@ -114,11 +118,11 @@ public class GestorBebidas {
         return total;
     }
 
-    public void removerCombo(int posicion){
-        if (posicion < 1 || posicion > combos.size()){
+    public void removerCombo(int indice){
+        if (indice < 1 || indice > combos.size()){
             throw new ComboLimiteAlcanzadoException("Selecciono una opcion fuera del rango, vuelva a ingresar el combo a eliminar");
         }
-        combos.remove(posicion-1);
+        combos.remove(indice-1);
         System.out.println("Se elimino correctamente el combo");
     }
 
@@ -132,14 +136,4 @@ public class GestorBebidas {
         }
     }
 
-    public void modificarCombo(int posicion, Producto producto){
-        if (posicion < 1 || posicion > combos.size()){
-            throw new ComboLimiteAlcanzadoException("Seleccionó una opción fuera del rango, vuelva a ingresar el combo a modificar");
-        }
-        for(Producto productoIteracion : combos.get(posicion).getProductos()){
-            if (productoIteracion.getNombre().equals(producto.getNombre())){
-
-            }
-        }
-    }
 }

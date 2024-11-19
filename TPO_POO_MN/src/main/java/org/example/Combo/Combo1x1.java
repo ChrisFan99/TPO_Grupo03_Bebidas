@@ -19,11 +19,11 @@ public class Combo1x1 extends Combo{
             throw new ComboLimiteAlcanzadoException("Este combo unicamnete admite 1 bebida de cada tipo");}
 
         else if (this.productos.isEmpty()) {
-            this.productos.add(unProducto.recrearProductoParaCombo(cantidad));}
+            this.productos.add(unProducto.recrearProductoParaCombo(cantidad, unProducto.getNombre()));}
 
         // Verifica si el producto complementario cumple con la regla de alcohol.
         else if (esProductoComplementario(unProducto)) {
-            this.productos.add(unProducto.recrearProductoParaCombo(cantidad));}
+            this.productos.add(unProducto.recrearProductoParaCombo(cantidad, unProducto.getNombre()));}
 
         else {
             throw new ProductoExistenteException("Se necesita agregar una bebida complementaria");}

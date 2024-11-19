@@ -24,11 +24,11 @@ public class Producto {
         this.costo = costo;
     }
 
-    public Producto recrearProductoParaCombo(int cantidad){
+    public Producto recrearProductoParaCombo(int cantidad, String nombre){
         if (cantidad == 0){
             throw new ProductoExistenteException("No se puede producir el combo si el producto no tiene stock");
         }
-        return new Producto(this.nombre, this.litros, this.esAlcoholica, this.venta, this.costo, cantidad);
+        return new Producto(nombre, this.litros, this.esAlcoholica, this.venta, this.costo, cantidad);
     }
 
     public boolean esAlcoholica() {

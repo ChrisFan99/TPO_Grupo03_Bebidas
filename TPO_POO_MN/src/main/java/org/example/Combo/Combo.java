@@ -15,7 +15,7 @@ public abstract class Combo implements InterfaceCombo{
         this.productos = new ArrayList<>();
     }
 
-    protected abstract void agregarProducto(Producto unProducto, int cantidad);
+    public abstract void agregarProducto(Producto unProducto, int cantidad);
 
     protected void validarCantidadDeProductos(int limite) {
         int cantidadProductos = 0;
@@ -51,4 +51,7 @@ public abstract class Combo implements InterfaceCombo{
         return productos;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
 }
