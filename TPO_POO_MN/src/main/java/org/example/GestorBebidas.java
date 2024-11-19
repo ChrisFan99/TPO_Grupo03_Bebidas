@@ -118,9 +118,17 @@ public class GestorBebidas {
         if (posicion < 1 || posicion > combos.size()){
             throw new ComboLimiteAlcanzadoException("Selecciono una opcion fuera del rango, vuelva a ingresar el combo a eliminar");
         }
-        combos.remove(posicion);
+        combos.remove(posicion-1);
         System.out.println("Se elimino correctamente el combo");
     }
 
-
+    public void descontarProductos(Combo combo){
+        for (Producto productoCombo : combo.getProductos()){
+            for (Producto productoStock : bebidas){
+                if (productoStock.getNombre().equals(productoCombo.getNombre())){
+                    productoStock.setCantidad(productoStock.getCantidad() - productoCombo.getCantidad());
+                }
+            }
+        }
+    }
 }

@@ -28,7 +28,6 @@ public class Producto {
         if (cantidad == 0){
             throw new ProductoExistenteException("No se puede producir el combo si el producto no tiene stock");
         }
-        this.cantidad -= cantidad;
         return new Producto(this.nombre, this.litros, this.esAlcoholica, this.venta, this.costo, cantidad);
     }
 

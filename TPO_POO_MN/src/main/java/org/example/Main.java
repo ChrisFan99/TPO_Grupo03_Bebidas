@@ -3,6 +3,7 @@ package org.example;
 import org.example.Combo.Combo1x1;
 import org.example.Combo.ComboCompleto;
 import org.example.Combo.ComboEnLaPera;
+import org.example.Exception.ComboLimiteAlcanzadoException;
 import org.example.Exception.ProductoExistenteException;
 import org.example.Exception.ProductoNoEncontradoException;
 import org.example.Producto.Producto;
@@ -43,11 +44,11 @@ public class Main {
         productos.agregarProducto(gancia);
         productos.agregarCombo(comboCocaFernet);
         productos.agregarCombo(combox6Fernet);
+        productos.descontarProductos(comboCocaFernet);
+        productos.descontarProductos(combox6Fernet);
 
         do {
-
             int opcion = obtenerOpcionMenu(input);
-
             // Delegar todos los case en métodos auxiliares
             switch (opcion) {
                 case 0:
@@ -281,7 +282,6 @@ public class Main {
                     System.out.println("--------------------------------------------------------------------------------");
                     System.out.println("Seleccione cual de estas 3 opciones le gustaria modificar (1. Cantidad - 2. Precio de Venta - 3.Valor de costo) ");
                     int opcion3 = input.nextInt();
-
                     switch (opcion3) {
                         case 1:
                             System.out.println("Ingrese la cantidad a modificar: ");
@@ -373,119 +373,153 @@ public class Main {
     }
 
     //Case8
-    private static void agregarCrearCombo (GestorBebidas productos, Scanner input){
+    private static void agregarCrearCombo(GestorBebidas productos, Scanner input) {
         System.out.println("\nSelecciono la opcion 'Agregar/Crear Combo'");
         System.out.println("--------------------------------------------------------------------------------");
         System.out.println("Ingrese que tipo de combo le gustaria crear: (1. combo1x1 - 2. comboEnLaPera - 3.comboCompleto)");
-        int opcionVerCombo = input.nextInt();
-        input.nextLine(); // Este nextLine() limpia el salto de línea del buffer
-        
-        switch (opcionVerCombo) {
-            case 1:
-                System.out.println("Selecciono el combo 1x1");
-                System.out.println("Ingrese el nombre del producto que le gustaria agregar: (tener en cuenta que se agregara automaticamente 1 de c/u");
-                boolean bandera91 = true;
-                do{
-                    try{
-                        System.out.println("Primer producto");
-                        String nombreProducto1 = input.nextLine();
-                        System.out.println("Segundo producto");
-                        String nombreProducto2 = input.nextLine();
+        try {
+            int opcionVerCombo = input.nextInt();
+            input.nextLine(); // Limpiar el salto de línea residual
+            switch (opcionVerCombo) {
+                case 1:
+                    System.out.println("Selecciono el combo 1x1");
+                    System.out.println("Ingrese el nombre del producto que le gustaria agregar: (tener en cuenta que se agregara automaticamente 1 de c/u)");
+                    boolean bandera91 = true;
+                    Combo1x1 comboCreacion = new Combo1x1();
 
-                        //Validacion
-                        if (productos.estaElProducto(nombreProducto1) || productos.estaElProducto(nombreProducto2)){
-                            throw new ProductoExistenteException("Alguno de los 2 nombres, son productos que no se encuentran en el stock, reinciando opcion 9........");
-                        }
+                    do {
+                        try {
+                            System.out.println("Primer producto");
+                            String nombreProducto1 = input.nextLine();
 
-                        Combo1x1 comboCreacion = new Combo1x1();
+                            // Buscar productos en el stock
+                            Producto producto1 = productos.buscarProducto(nombreProducto1);
 
-                        Producto producto1 = productos.buscarProducto(nombreProducto1);
-                        Producto producto2 = productos.buscarProducto(nombreProducto2);
-                        comboCreacion.agregarProducto(producto1,1);
-                        comboCreacion.agregarProducto(producto2,1);
+                            // Si no se encuentran, lanzar una excepción
+                            if (producto1 == null) {
+                                throw new ProductoNoEncontradoException("El producto no se encuentra en stock, reiniciando programa...");
+                            }
 
-                        System.out.println("El creacion del combo se finalizo correctamente");
-                        productos.agregarCombo(comboCreacion);
-                        bandera91 = false;
+                            System.out.println("Segundo producto");
+                            String nombreProducto2 = input.nextLine();
 
-                    }catch (ProductoNoEncontradoException exception){
-                        System.out.println("Ingrese el tipo de dato solicitado, reiniciando creacion de combo.....");
-                    }
-                } while(bandera91);
-                break;
+                            Producto producto2 = productos.buscarProducto(nombreProducto2);
 
-            case 2:
-                System.out.println("Selecciono el comboEnLaPera");
-                System.out.println("Se le solicitara que ingrese continuamente el producto y la cantidad que le gustaria para el combo");
-                boolean bandera92 = true;
-                do{
-                    try{
-                        System.out.println("Ingresar nombre del producto: ");
-                        String nombreProducto = input.nextLine();
-                        Producto producto = productos.buscarProducto(nombreProducto);
-                        if (productos.estaElProducto(nombreProducto)){
-                            throw new ProductoExistenteException("No se encontro un producto con el nombre seleccionado, reiniciando la carga.........");
-                        }
-                        System.out.println("Ingrese la cantidad del producto: ");
-                        int cantidadProducto = input.nextInt();
+                            if (producto2 == null){
+                                throw new ProductoNoEncontradoException("El producto no se encuentra en stock, reiniciando programa...");
+                            }
 
-                        ComboEnLaPera comboCreacion = new ComboEnLaPera();
+                            if ((!producto1.esAlcoholica() && !producto2.esAlcoholica()) || (producto1.esAlcoholica() && producto2.esAlcoholica())){
+                                throw new ProductoExistenteException("No se puede agregar ya que son 2 productos complementarios, reiniciando programa......");
+                            }
 
-                        comboCreacion.agregarProducto(producto,cantidadProducto);
+                            comboCreacion.agregarProducto(producto1, 1);
+                            comboCreacion.agregarProducto(producto2, 1);
 
-                        if (comboCreacion.cantidadBebidasCombo() == 6){
-                            System.out.println("El creacion del combo se finalizo correctamente");
+                            productos.descontarProductos(comboCreacion);
+
+                            System.out.println("La creación del combo 1x1 se finalizó correctamente");
                             productos.agregarCombo(comboCreacion);
-                            bandera92 = false;
+                            bandera91 = false;
+
+                        } catch (ProductoNoEncontradoException | ProductoExistenteException exception) {
+                            System.out.println("Error: " + exception.getMessage() + " Por favor, ingrese los datos nuevamente.");
+                            input.nextLine(); // Limpiar el buffer después de una excepción
+
                         }
-                        else {
-                            System.out.println("Producto agregado al combo correctamente, vuelva a ingresar un nuevo producto");
+                    } while (bandera91);
+                    break;
+
+                case 2:
+                    System.out.println("Selecciono el comboEnLaPera");
+                    System.out.println("Se le solicitara que ingrese continuamente el producto y la cantidad que le gustaria para el combo");
+                    boolean bandera92 = true;
+                    ComboEnLaPera comboCreacionEnLaPera = new ComboEnLaPera();
+
+                    do {
+                        try {
+                            System.out.println("Ingresar nombre del producto: ");
+                            String nombreProducto = input.nextLine();
+                            Producto producto = productos.buscarProducto(nombreProducto);
+                            if (producto == null) {
+                                throw new ProductoNoEncontradoException("No se encontró un producto con el nombre seleccionado.");
+                            }
+
+                            System.out.println("Ingrese la cantidad del producto: ");
+                            int cantidadProducto = input.nextInt();
+                            input.nextLine(); // Limpiar el buffer
+
+                            comboCreacionEnLaPera.agregarProducto(producto, cantidadProducto);
+
+                            if (comboCreacionEnLaPera.cantidadBebidasCombo() == 6) {
+                                System.out.println("La creación del combo se finalizó correctamente");
+                                productos.agregarCombo(comboCreacionEnLaPera);
+                                productos.descontarProductos(comboCreacionEnLaPera);
+                                bandera92 = false;
+                            } else {
+                                System.out.println("Producto agregado al combo correctamente. Vuelva a ingresar un nuevo producto.");
+                            }
+
+                        } catch (ProductoNoEncontradoException | ProductoExistenteException | ComboLimiteAlcanzadoException exception) {
+                            System.out.println("Error: " + exception.getMessage());
+                            input.nextLine(); // Limpiar el buffer
+                        } catch (InputMismatchException exception) {
+                            System.out.println("Entrada inválida. Por favor, ingrese la cantidad correctamente.");
+                            input.nextLine(); // Limpiar el buffer
                         }
+                    } while (bandera92);
+                    break;
 
-                    }catch(ProductoNoEncontradoException exception){
-                        System.out.println("Ingrese el tipo de dato solicitado, reiniciando creacion de combo.....");
-                    }
-                }
-                while(bandera92);
-                break;
+                case 3:
+                    System.out.println("Selecciono el comboCompleto");
+                    System.out.println("Se le solicitara que ingrese continuamente el producto y la cantidad que le gustaria para el combo");
+                    boolean bandera93 = true;
+                    ComboCompleto comboCompleto = new ComboCompleto();
 
-            case 3:
-                System.out.println("Selecciono el comboCompleto");
-                System.out.println("Se le solicitara que ingrese continuamente el producto y la cantidad que le gustaria para el combo");
-                boolean bandera93 = true;
-                do{
-                    try{
-                        System.out.println("Ingresar nombre del producto: ");
-                        String nombreProducto = input.nextLine();
-                        Producto producto = productos.buscarProducto(nombreProducto);
-                        if (productos.estaElProducto(nombreProducto)){
-                            throw new ProductoExistenteException("No se encontro un producto con el nombre seleccionado, reiniciando la carga.........");
+                    do {
+                        try {
+                            System.out.println("Ingresar nombre del producto: ");
+                            String nombreProducto = input.nextLine();
+                            Producto producto = productos.buscarProducto(nombreProducto);
+                            if (producto == null) {
+                                throw new ProductoNoEncontradoException("No se encontró un producto con el nombre seleccionado.");
+                            }
+
+                            System.out.println("Ingrese la cantidad del producto: ");
+                            int cantidadProducto = input.nextInt();
+                            input.nextLine(); // Limpiar el buffer
+
+                            comboCompleto.agregarProducto(producto, cantidadProducto);
+
+                            if (comboCompleto.cantidadBebidasCombo() == 18) {
+                                System.out.println("La creación del combo se finalizó correctamente");
+                                productos.agregarCombo(comboCompleto);
+                                productos.descontarProductos(comboCompleto);
+                                bandera93 = false;
+                            } else {
+                                System.out.println("Producto agregado al combo correctamente. Vuelva a ingresar un nuevo producto.");
+                            }
+
+                        } catch (ProductoNoEncontradoException | ProductoExistenteException | ComboLimiteAlcanzadoException exception) {
+                            System.out.println("Error: " + exception.getMessage());
+                            input.nextLine(); // Limpiar el buffer
+                        } catch (InputMismatchException exception) {
+                            System.out.println("Entrada inválida. Por favor, ingrese la cantidad correctamente.");
+                            input.nextLine(); // Limpiar el buffer
                         }
-                        System.out.println("Ingrese la cantidad del producto: ");
-                        int cantidadProducto = input.nextInt();
+                    } while (bandera93);
+                    break;
 
-                        ComboCompleto comboCreacion = new ComboCompleto();
-
-                        comboCreacion.agregarProducto(producto,cantidadProducto);
-
-                        if (comboCreacion.cantidadBebidasCombo() == 18){
-                            System.out.println("El creacion del combo se finalizo correctamente");
-                            productos.agregarCombo(comboCreacion);
-                            bandera93 = false;
-                        }
-                        else {
-                            System.out.println("Producto agregado al combo correctamente, vuelva a ingresar un nuevo producto");
-                        }
-
-                    }catch(ProductoNoEncontradoException exception){
-                        System.out.println("Ingrese el tipo de dato solicitado, reiniciando creacion de combo.....");
-                    }
-                }
-                while(bandera93);
-
-                break;
-            default:
-                throw new ProductoExistenteException("El parametro ingresado no corresponde a lo solicitado por consola, porfavor volver a ingresar");
+                default:
+                    System.out.println("El parámetro ingresado no corresponde a lo solicitado por consola.");
+            }
+        }catch (InputMismatchException | ProductoExistenteException | ComboLimiteAlcanzadoException e) {
+            if (e.getMessage() == null){
+                System.out.println("Error: Ingreso de un tipo de dato incorrecto. Volviendo al menu.......");
+            }else {
+                System.out.println("Error: " + e.getMessage());
+            }
+            input.nextLine(); // Limpiar el buffer
         }
     }
 
@@ -500,14 +534,21 @@ public class Main {
                 System.out.println("Ingrese la posicion del combo que le gustaria eliminar: ");
                 int posicion = input.nextInt();
 
+                input.nextLine();  // limpiar el buffer
+
                 productos.removerCombo(posicion);
                 bandera9 = false;
 
-            } catch (InputMismatchException exception){
-                System.out.println("Ingrese el tipo de dato solicitado, reiniciando opcion 9........");}
-            bandera9 = true;
-
-        } while (bandera9);
+            } catch (InputMismatchException exception) {
+                System.out.println("Ingrese el tipo de dato solicitado, reiniciando opcion 9........");
+                input.nextLine(); // Limpiar el buffer
+                bandera9 = true;
+            }catch (ProductoNoEncontradoException | ProductoExistenteException | ComboLimiteAlcanzadoException exception) {
+                System.out.println("Error: " + exception.getMessage());
+                input.nextLine(); // Limpiar el buffer
+                bandera9 = true;
+            }
+        }while (bandera9);
     }
-
+    
 }

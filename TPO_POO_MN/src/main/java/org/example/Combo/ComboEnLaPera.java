@@ -1,5 +1,6 @@
 package org.example.Combo;
 
+import org.example.Exception.ComboLimiteAlcanzadoException;
 import org.example.Exception.ProductoExistenteException;
 import org.example.Producto.Producto;
 
@@ -13,13 +14,12 @@ public class ComboEnLaPera extends Combo{
     @Override
     public void agregarProducto(Producto unProducto, int cantidad) {
         Producto productoAgregar = unProducto.recrearProductoParaCombo(cantidad);
-        validarCantidadDeProductos(6);
 
         if (productoAgregar.esAlcoholica()) {
 
             //Contamos solo las bebidas alcoholicas
             if (contarBebidasTipo(productoAgregar.esAlcoholica()) + productoAgregar.getCantidad() > 6) {
-                throw new ProductoExistenteException("El combo unicamente permite 6 productos");}
+                throw new ComboLimiteAlcanzadoException("El combo unicamente permite 6 productos");}
 
             boolean productoExiste = false;
             for (Producto productoIteracion : productos){
