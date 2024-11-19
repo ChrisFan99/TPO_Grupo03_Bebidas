@@ -1,5 +1,7 @@
 package org.example.Producto;
 
+import org.example.Exception.ProductoExistenteException;
+
 public class Producto {
 
     protected String nombre;
@@ -22,6 +24,14 @@ public class Producto {
         this.costo = costo;
     }
 
+    public Producto recrearProductoParaCombo(int cantidad){
+        if (cantidad == 0){
+            throw new ProductoExistenteException("No se puede producir el combo si el producto no tiene stock");
+        }
+        this.cantidad -= cantidad;
+        return new Producto(this.nombre, this.litros, this.esAlcoholica, this.venta, this.costo, cantidad);
+    }
+
     public boolean esAlcoholica() {
         return esAlcoholica;
     }
@@ -38,10 +48,6 @@ public class Producto {
         return litros;
     }
 
-    public boolean isEsAlcoholica() {
-        return esAlcoholica;
-    }
-
     public float getVenta() {
         return venta;
     }
@@ -52,5 +58,13 @@ public class Producto {
 
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
+    }
+
+    public void setVenta(float venta) {
+        this.venta = venta;
+    }
+
+    public void setCosto(float costo) {
+        this.costo = costo;
     }
 }

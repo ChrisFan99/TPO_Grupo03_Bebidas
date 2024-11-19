@@ -1,43 +1,47 @@
 package org.example.Combo;
 
+import org.example.Exception.ComboLimiteAlcanzadoException;
+import org.example.Exception.ProductoExistenteException;
 import org.example.Producto.Producto;
 
-import java.util.Arrays;
+public class ComboCompleto extends ComboEnLaPera{
 
-public class ComboCompleto extends Combo{
-
-    private int cantVasos;
-
-    private float pesoHielo;
-
-    public ComboCompleto(Combo combo) {
-        if (combo.cantidadBebidas() == 2){
-            this.nombre = "ComboCompleto1x1";
-            this.cantVasos = 4;
-            this.pesoHielo = 0.5f;
-        }
-        else if (combo.cantidadBebidas() > 6 && combo.cantidadBebidas() < 10) {
-            this.nombre = "ComboCompletoEnLaPera";
-            this.cantVasos = combo.cantidadBebidas() * 2;
-            this.pesoHielo = combo.cantidadBebidas() * 0.25f;
-        }
-        else{
-            throw new RuntimeException("Error al cargar un combo, revisar el codigo");
-        }
+    public ComboCompleto() {
+        super();
+        this.nombre = "Combo Completo";
     }
 
     @Override
-    protected boolean agregarCombo(Producto... productos) {
-        if (productos.length == 2){
-            Producto produ1 = productos[0];
-            Producto produ2 = productos[1];
-            this.combos.add(produ1);
-            this.combos.add(produ2);
-            return true;
-        }
-        else {
-            this.combos.addAll(Arrays.asList(productos));
-            return true;
+    public void agregarProducto(Producto unProducto, int cantidad) {
+        Producto productoAgregar = unProducto.recrearProductoParaCombo(cantidad);
+        validarCantidadDeProductos(18);
+
+        if (productoAgregar.esAlcoholica() && contarBebidasTipo(productoAgregar.esAlcoholica()) + productoAgregar.getCantidad() <= 6) {
+            this.productos.add(productoAgregar);}
+
+        else if (!productoAgregar.esAlcoholica()){
+            if (contarBebidasTipo(false) + productoAgregar.getCantidad() <= 12){
+                if (productos.contains(productoAgregar)){
+                    boolean productoExiste = false;
+                    for (Producto productoIteracion : productos){
+                        if (productoIteracion.getNombre().equals(productoAgregar.getNombre())) {
+                            productoIteracion.setCantidad(productoIteracion.getCantidad() + productoAgregar.getCantidad());
+                            productoExiste = true;
+                            break;}
+
+                        }
+                }
+                else{
+                productos.add(productoAgregar); //Si no existe, lo agregamos
+                }
             }
+            else {
+            throw new ProductoExistenteException("Este combo unicamente acepta 12 bebidas sin alcohol");}
+        }
+
+        else{
+            throw new ComboLimiteAlcanzadoException("Este combo unicamente qcepta 6 bebidas alcoholicas");}
+
     }
 }
+

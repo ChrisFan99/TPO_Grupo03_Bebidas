@@ -1,7 +1,13 @@
 package org.example;
 
+import org.example.Combo.Combo1x1;
+import org.example.Combo.ComboCompleto;
+import org.example.Combo.ComboEnLaPera;
+import org.example.Exception.ProductoExistenteException;
+import org.example.Exception.ProductoNoEncontradoException;
 import org.example.Producto.Producto;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
@@ -11,132 +17,497 @@ public class Main {
         boolean banderaMenu = true;
 
         //Input por shell para el usuario
-        Scanner inputlog = new Scanner(System.in);
-        Scanner input1 = new Scanner(System.in);
-        Scanner input2 = new Scanner(System.in);
-        Scanner input4 = new Scanner(System.in);
-        Scanner input5 = new Scanner(System.in);
-        Scanner input6 = new Scanner(System.in);
-        Scanner input9 = new Scanner(System.in);
+        Scanner input = new Scanner(System.in);
 
         //Creacion de clases gesto y combos
         GestorBebidas productos = new GestorBebidas();
 
         //Bebidas Prueba
+        Producto cocaCola = new Producto("CocaCola",0.5f,false,1000,500,50);
+        Producto sprite = new Producto("Sprite",0.5f,false,1000,500,50);
+        Producto fernet = new Producto("Fernet",1.7f,true,3000,1500,20);
+        Producto gancia = new Producto("Gancia",1.7f,true,3000,1500,20);
 
         //Combos Prueba
+        Combo1x1 comboCocaFernet = new Combo1x1();
+        comboCocaFernet.agregarProducto(cocaCola,1);
+        comboCocaFernet.agregarProducto(fernet,1);
+
+        ComboEnLaPera combox6Fernet = new ComboEnLaPera();
+        combox6Fernet.agregarProducto(fernet,6);
+
+        //Agregar  y combos
+        productos.agregarProducto(cocaCola);
+        productos.agregarProducto(sprite);
+        productos.agregarProducto(fernet);
+        productos.agregarProducto(gancia);
+        productos.agregarCombo(comboCocaFernet);
+        productos.agregarCombo(combox6Fernet);
 
         do {
-            System.out.println(menu());
-            int opcion = inputlog.nextInt();
+
+            int opcion = obtenerOpcionMenu(input);
+
+            // Delegar todos los case en métodos auxiliares
             switch (opcion) {
                 case 0:
                     banderaMenu = false;
                     break;
 
-                //agregar producto
                 case 1:
-                    boolean bandera1 = true;
-                    boolean bandera1_1 = false;
-                    do {
-                        System.out.println("Seleccionaste la opcion agregar bebida");
-                        System.out.print("Ingrese el nombre de la bebida: ");
-                        String nombre = input1.nextLine();
-                        System.out.print("Ingrese los litos de la bebida: ");
-                        float litros = input1.nextFloat();
-                        System.out.print("Ingrese si es una bebida alcoholica o gaseosa (true = alcoholica, false = gaseosa)");
-                        boolean esAlcoholica = input1.nextBoolean();
-                        System.out.print("Ingrese el precio de venta de la bebida: ");
-                        float venta = input1.nextFloat();
-                        System.out.print("Ingrese el costo de la bebida: ");
-                        float costo = input1.nextFloat();
-                        System.out.print("Ingrese la cantidad de unidades de bebidas existentes: ");
-                        int cantidad = input1.nextInt();
-                        productos.agregarProducto(new Producto(nombre, litros, esAlcoholica, venta, costo, cantidad));
-                        System.out.println("Le gustaria seguir agregando productos? (Ingrese 0 para volver al menu \n Ingrese 1 para seguir ingresando)");
-                        do{
-                            int opcionCargarBebida = input1.nextInt();
-                            switch (opcionCargarBebida) {
-                            case 0:
-                                bandera1 = false;
-                                bandera1_1 = false;
-                                break;
-                            case 1:
-                                bandera1_1 = false;
-                                break;
-                            default:
-                                System.out.print("Ingreso una opcion diferente, ingrese nuevamente alguna de las 2 opciones (Ingrese 0 para volver al menu \n Ingrese 1 para seguir ingresando): ");
-                                bandera1_1 = true;
-                            }
-                        }while(bandera1_1);
-                    }while(bandera1);
+                    agregarProducto(productos, input);
                     break;
 
                 case 2:
-
+                    removerProducto(productos,input);
                     break;
 
                 case 3:
+                    modificarProducto(productos, input);
                     break;
 
                 case 4:
-                    System.out.println("Selecciono la opcion ver informacion de bebida");
-                    System.out.println("Ingrese el nombre de la bebida para obtener su informacion: ");
-                    String nombre = input4.nextLine();
-                    System.out.println(productos.verInformacionDeBebidas(nombre));
+                    informacionBebida(productos, input);
                     break;
 
                 case 5:
-                    System.out.println("Selecciono la opcion ver listado de bebidas, imprimiendo listado...");
-                    System.out.println(productos.verListadoBebidas());
+                    verListadoBebidas(productos);
                     break;
 
                 case 6:
+                    capitalTotalInvertido(productos);
                     break;
 
                 case 7:
+                    listarTodosLosCombos(productos);
                     break;
 
                 case 8:
+                    agregarCrearCombo(productos, input);
                     break;
 
                 case 9:
+                    removerCombo(productos, input);
                     break;
 
                 case 10:
-                    //Debe tener un combo Formado y verificar si no esta vacio el arreglo
-                    //combos.removerCombo();
-                    break;
-
-                case 11:
                     //Solicitar nombre del producto, mostrar en que combos esta y seleccionar el combo a modificar, luego guardarlo en el arreglo
                     break;
 
                 default:
                     System.out.println("Opcion fuera del rango, ingrese nuevamente una opcion dentro del mismo");
-
             }
 
         } while (banderaMenu);
+
+        input.close();
     }
 
-    //Hacer presupuesto
-    //Combo activo o inactivo
-    //Es apto para combo (Alcoholico, Gaseoso)
-
-    private static String menu(){
-        return "\nElija a de las siguientes opciones:\n" +
-                " 1.Agregar Producto\n"+
-                " 2.Remover Producto \n"+
-                " 3.Modificar Producto (x Cantidad)\n"+
-                " 4.Informacion de bebidas seleccionada\n"+
-                " 5.Ver listado de todas las bebidas\n"+
-                " 6.Ganancia de bebida (c/u) \n"+
-                " 7.Dinero Total invertido\n"+
-                " 8.Consultar todos los combos\n"+
-                " 9.Agregar combo\n"+
-                " 10.Remover combo\n"+
-                " 11.Modificar Combo\n"+
-                " 0.Salir";
+    // Método para obtener la opción del menú de manera segura
+    private static int obtenerOpcionMenu(Scanner input) {
+        int opcion = -1;
+        while (opcion < 0 || opcion > 11) {
+            try {
+                System.out.println(menu());
+                opcion = input.nextInt();
+                input.nextLine(); // Limpiar el buffer
+            } catch (InputMismatchException e) {
+                System.out.println("Opción no válida, por favor ingresa un número.");
+                input.nextLine(); // Limpiar el buffer en caso de error
+            }
+        }
+        return opcion;
     }
+
+    private static String menu() {
+        return "\nElija una de las siguientes opciones:\n" +
+                "1. Agregar Nuevo Producto\n" +
+                "2. Remover Producto\n" +
+                "3. Modificar Producto (Cantidad, Costo, Venta)\n" +
+                "4. Información de Bebidas Seleccionadas\n" +
+                "5. Ver Listado de Todas las Bebidas\n" +
+                "6. Capital Total Invertido\n" +
+                "7. Listar Todos los Combos\n" +
+                "8. Agregar/Crear Combo\n" +
+                "9. Remover Combo\n" +
+                "10. Modificar Combo\n" +
+                "0. Salir";
+    }
+
+
+    // Métodos auxiliares para cada acción del menú
+
+    //Case1
+    private static void agregarProducto(GestorBebidas productos, Scanner input) {
+        boolean bandera1 = true;
+        do {
+            try {
+                try {
+                    System.out.println("\nSeleccionaste la opcion 'agregar producto'");
+                    System.out.println("--------------------------------------------------------------------------------");
+                    boolean perdida = true, seguirAgregandoProductos = false;
+
+                    //Nobre y validacion con excepciones
+                    System.out.print("Ingrese el nombre de la bebida: ");
+                    String nombre = input.nextLine();
+                    if (productos.estaElProducto(nombre)) {
+                        throw new ProductoExistenteException("El nombre ingresado ya pertenece a un objeto en stock, reiniciando la carga de datos........");
+                    }
+
+                    //litros y validacion con excepciones
+                    System.out.print("Ingrese los litos de la bebida: ");
+                    float litros = input.nextFloat();
+                    input.nextLine();
+                    if (litros < 0){
+                        throw new ProductoExistenteException("No se permite ingresar litros negativos, reinciando la carga de datos......");
+                    }
+
+                    //Alcolica o no, la validacion lo hace la excepcion del tipo de dato
+                    System.out.print("Ingrese si es una bebida alcoholica o gaseosa (true = alcoholica, false = gaseosa): ");
+                    boolean esAlcoholica = input.nextBoolean();
+                    input.nextLine();
+
+                    float venta = 0, costo = 0;
+                    //Precio de venta y su validacion con excepciones
+                    System.out.print("Ingrese el precio de venta de la bebida: $");
+                    venta = input.nextFloat();
+                    input.nextLine();
+                    if (venta < 0){
+                        throw new ProductoExistenteException("El precio de venta no puede ser negativo, reiniciando carga de datos..........");
+                    }
+
+                    //Costo del producto y su validacion con excepciones
+                    System.out.print("Ingrese el costo de la bebida: $");
+                    costo = input.nextFloat();
+                    input.nextLine();
+                    if (costo < 0){
+                        throw new ProductoExistenteException("El costo no puede ser negativo, reiniciando carga de datos..........");
+                    }
+
+                    if (venta < costo) {
+                        throw new ProductoExistenteException("El precio de venta es menor al costo ingresado, reiniciando carga de datos..........");
+                    }
+
+                    //Cantidad y su validacion con excepciones
+                    System.out.print("Ingrese la cantidad de unidades de bebidas existentes: ");
+                    int cantidad = input.nextInt();
+                    input.nextLine();
+                    if (cantidad < 0) {
+                        throw new ProductoExistenteException("No se permite ingresar cantidades negativas, reiniciando la carga de datos........");
+                    }
+
+                    //Crear producto y agregar el gestor
+                    productos.agregarProducto(new Producto(nombre, litros, esAlcoholica, venta, costo, cantidad));
+
+                    System.out.println("Le gustaria seguir agregando productos? (Ingrese 0 para volver al menu \n Ingrese 1 para seguir ingresando)");
+                    do {
+                        int opcionCargarBebida = input.nextInt();
+                        switch (opcionCargarBebida) {
+                            case 0:
+                                bandera1 = false;
+                                seguirAgregandoProductos = false;
+                                break;
+                            case 1:
+                                seguirAgregandoProductos = false;
+                                break;
+                            default:
+                                System.out.print("Ingreso una opcion diferente, ingrese nuevamente alguna de las 2 opciones (Ingrese 0 para volver al menu \n Ingrese 1 para seguir ingresando): ");
+                                seguirAgregandoProductos = true;
+                        }
+                    } while (seguirAgregandoProductos);
+                } catch (InputMismatchException | ProductoExistenteException e) {
+                    if (e.getMessage() == null){
+                        System.out.println("Error: Ingreso de un tipo de dato incorrecto");
+                    }else {
+                        System.out.println("Error: " + e.getMessage());
+                    }
+                    input.nextLine(); // Limpiar el buffer
+                    System.out.println("Por favor, ingrese los datos nuevamente.");
+                }
+            }catch (Exception e){
+                System.out.println("Error inesperado: " + e.getMessage());
+            }
+        } while (bandera1) ;
+    }
+
+    //Case2
+    private static void removerProducto(GestorBebidas productos, Scanner input) {
+        boolean bandera2 = true;
+        do {
+            try {
+                System.out.println("\nSeleccionaste la opcion 'Remover producto'");
+                System.out.println("--------------------------------------------------------------------------------");
+                System.out.println("Le gustaria ver todos los productos en stock? Ingrese 'si' o 'no'");
+                String opcionVerProductos = input.nextLine();
+                switch (opcionVerProductos) {
+                    case "si":
+                        productos.verListadoBebidas();
+                        break;
+                    case "no":
+                        break;
+                    default:
+                        throw new ProductoExistenteException("El parametro ingresado no corresponde a lo solicitado por consola, porfavor volver a ingresar");
+                }
+
+                System.out.print("Ingresar el nombre del producto a remover: ");
+                String nombre2 = input.nextLine();
+                //Verificacion si se encuentra dentro del metodo
+                productos.removerProducto(nombre2);
+                bandera2 = false;
+
+            } catch (InputMismatchException | ProductoExistenteException e) {
+                if (e.getMessage() == null) {
+                    System.out.println("Ingrese el tipo de dato solicitado, reiniciando opcion 2.....");
+                } else {
+                    System.out.println("Error: " + e.getMessage());
+                }
+                input.nextLine(); // Limpiar el buffer
+                System.out.println("Por favor, ingrese los datos nuevamente.");
+            }
+
+        } while (bandera2);
+    }
+
+    //Case3
+    private static void modificarProducto(GestorBebidas productos, Scanner input) {
+        boolean bandera3 = true;
+        do{
+            try {
+                    System.out.println("\nSelecciono la opcion 'Modificar un producto'");
+                    System.out.println("--------------------------------------------------------------------------------");
+                    System.out.println("Ingresar el nombre del producto a modificar: ");
+                    String nombre = input.nextLine();
+                    productos.verInformacionDeBebidas(nombre);
+                    System.out.println("--------------------------------------------------------------------------------");
+                    System.out.println("Seleccione cual de estas 3 opciones le gustaria modificar (1. Cantidad - 2. Precio de Venta - 3.Valor de costo) ");
+                    int opcion3 = input.nextInt();
+
+                    switch (opcion3) {
+                        case 1:
+                            System.out.println("Ingrese la cantidad a modificar: ");
+                            int nuevaCantidad = input.nextInt();
+                            if (nuevaCantidad < 0){
+                                throw new ProductoExistenteException("No se puede ingresar cantidades negativas, reinciando programa");
+                            }
+                            productos.buscarProducto(nombre).setCantidad(nuevaCantidad);
+                            bandera3 = false;
+                            break;
+                        case 2:
+                            System.out.println("Ingrese el precio de venta a modificar: ");
+                            float nuevoPrecioDeVenta = input.nextFloat();
+                            if (nuevoPrecioDeVenta < 0){
+                                throw new ProductoExistenteException("No se puede ingresar un precio de venta negativo, reinciando programa");
+                            }
+                            productos.buscarProducto(nombre).setVenta(nuevoPrecioDeVenta);
+                            bandera3 = false;
+                            break;
+                        case 3:
+                            System.out.println("Ingrese el costo del producto a modificar: ");
+                            float nuevoCosto = input.nextFloat();
+                            if (nuevoCosto < 0){
+                                throw new ProductoExistenteException("No se puede ingresar un costo del producto negativo, reinciando programa");
+                            }
+                            productos.buscarProducto(nombre).setCosto(nuevoCosto);
+                            bandera3 = false;
+                            break;
+                        default:
+                            throw new ProductoExistenteException("Opcion ingresada fuera del rango, profavor ingrese una de las 3 opciones (1. Cantidad - 2. Precio de Venta - 3.Valor de costo), reiniciando programna......");
+                    }
+                } catch (InputMismatchException | ProductoExistenteException e) {
+                if (e.getMessage() == null) {
+                    System.out.println("Ingrese el tipo de dato solicitado, reiniciando ingreso de datos.....");
+                } else {
+                    System.out.println("Error: " + e.getMessage());
+                }
+                input.nextLine(); // Limpiar el buffer
+                System.out.println("Por favor, ingrese los datos nuevamente.");
+            }
+        } while (bandera3);
+    }
+
+    //Case4
+    private static void informacionBebida(GestorBebidas productos, Scanner input) {
+        try {
+            System.out.println("\nSelecciono la opcion 'Informacion de bebida seleccionada'");
+            System.out.println("--------------------------------------------------------------------------------");
+            System.out.println("Ingrese el nombre de la bebida para obtener su informacion: ");
+            String nombreProducto = input.nextLine();
+            if (!productos.estaElProducto(nombreProducto)){
+                throw new ProductoNoEncontradoException("El nombre ingresado no corresponde a ningun producto en stock, volviendo al menu.......");
+            }
+            productos.verInformacionDeBebidas(nombreProducto);
+        }
+        catch (InputMismatchException | ProductoNoEncontradoException e) {
+            if (e.getMessage() == null) {
+                System.out.println("Ingrese el tipo de dato solicitado, Volviendo al menu........");
+            } else {
+                System.out.println("Error: " + e.getMessage());
+            }
+            input.nextLine(); // Limpiar el buffer
+            System.out.println("Por favor, ingrese los datos nuevamente.");
+        }
+
+    }
+
+    //Case5
+    private static void verListadoBebidas(GestorBebidas productos) {
+        System.out.println("\nSelecciono la opcion 'Ver listado de bebidas'");
+        System.out.println("--------------------------------------------------------------------------------");
+        productos.verListadoBebidas();
+    }
+
+    //Case6
+    private static void capitalTotalInvertido(GestorBebidas productos) {
+        System.out.println("\nSelecciono la opcion 'Capital total invertido'");
+        System.out.println("--------------------------------------------------------------------------------");
+        float totalInvertido = productos.verTotalInvertido();
+        System.out.println("El total invertido en stock es de: $"+totalInvertido);
+    }
+
+    //Case7
+    private  static void listarTodosLosCombos(GestorBebidas productos){
+        System.out.println("\nSelecciono la opcion 'Listar todos los combos'");
+        System.out.println("--------------------------------------------------------------------------------");
+        productos.verListadoCombos();
+
+    }
+
+    //Case8
+    private static void agregarCrearCombo (GestorBebidas productos, Scanner input){
+        System.out.println("\nSelecciono la opcion 'Agregar/Crear Combo'");
+        System.out.println("--------------------------------------------------------------------------------");
+        System.out.println("Ingrese que tipo de combo le gustaria crear: (1. combo1x1 - 2. comboEnLaPera - 3.comboCompleto)");
+        int opcionVerCombo = input.nextInt();
+        input.nextLine(); // Este nextLine() limpia el salto de línea del buffer
+        
+        switch (opcionVerCombo) {
+            case 1:
+                System.out.println("Selecciono el combo 1x1");
+                System.out.println("Ingrese el nombre del producto que le gustaria agregar: (tener en cuenta que se agregara automaticamente 1 de c/u");
+                boolean bandera91 = true;
+                do{
+                    try{
+                        System.out.println("Primer producto");
+                        String nombreProducto1 = input.nextLine();
+                        System.out.println("Segundo producto");
+                        String nombreProducto2 = input.nextLine();
+
+                        //Validacion
+                        if (productos.estaElProducto(nombreProducto1) || productos.estaElProducto(nombreProducto2)){
+                            throw new ProductoExistenteException("Alguno de los 2 nombres, son productos que no se encuentran en el stock, reinciando opcion 9........");
+                        }
+
+                        Combo1x1 comboCreacion = new Combo1x1();
+
+                        Producto producto1 = productos.buscarProducto(nombreProducto1);
+                        Producto producto2 = productos.buscarProducto(nombreProducto2);
+                        comboCreacion.agregarProducto(producto1,1);
+                        comboCreacion.agregarProducto(producto2,1);
+
+                        System.out.println("El creacion del combo se finalizo correctamente");
+                        productos.agregarCombo(comboCreacion);
+                        bandera91 = false;
+
+                    }catch (ProductoNoEncontradoException exception){
+                        System.out.println("Ingrese el tipo de dato solicitado, reiniciando creacion de combo.....");
+                    }
+                } while(bandera91);
+                break;
+
+            case 2:
+                System.out.println("Selecciono el comboEnLaPera");
+                System.out.println("Se le solicitara que ingrese continuamente el producto y la cantidad que le gustaria para el combo");
+                boolean bandera92 = true;
+                do{
+                    try{
+                        System.out.println("Ingresar nombre del producto: ");
+                        String nombreProducto = input.nextLine();
+                        Producto producto = productos.buscarProducto(nombreProducto);
+                        if (productos.estaElProducto(nombreProducto)){
+                            throw new ProductoExistenteException("No se encontro un producto con el nombre seleccionado, reiniciando la carga.........");
+                        }
+                        System.out.println("Ingrese la cantidad del producto: ");
+                        int cantidadProducto = input.nextInt();
+
+                        ComboEnLaPera comboCreacion = new ComboEnLaPera();
+
+                        comboCreacion.agregarProducto(producto,cantidadProducto);
+
+                        if (comboCreacion.cantidadBebidasCombo() == 6){
+                            System.out.println("El creacion del combo se finalizo correctamente");
+                            productos.agregarCombo(comboCreacion);
+                            bandera92 = false;
+                        }
+                        else {
+                            System.out.println("Producto agregado al combo correctamente, vuelva a ingresar un nuevo producto");
+                        }
+
+                    }catch(ProductoNoEncontradoException exception){
+                        System.out.println("Ingrese el tipo de dato solicitado, reiniciando creacion de combo.....");
+                    }
+                }
+                while(bandera92);
+                break;
+
+            case 3:
+                System.out.println("Selecciono el comboCompleto");
+                System.out.println("Se le solicitara que ingrese continuamente el producto y la cantidad que le gustaria para el combo");
+                boolean bandera93 = true;
+                do{
+                    try{
+                        System.out.println("Ingresar nombre del producto: ");
+                        String nombreProducto = input.nextLine();
+                        Producto producto = productos.buscarProducto(nombreProducto);
+                        if (productos.estaElProducto(nombreProducto)){
+                            throw new ProductoExistenteException("No se encontro un producto con el nombre seleccionado, reiniciando la carga.........");
+                        }
+                        System.out.println("Ingrese la cantidad del producto: ");
+                        int cantidadProducto = input.nextInt();
+
+                        ComboCompleto comboCreacion = new ComboCompleto();
+
+                        comboCreacion.agregarProducto(producto,cantidadProducto);
+
+                        if (comboCreacion.cantidadBebidasCombo() == 18){
+                            System.out.println("El creacion del combo se finalizo correctamente");
+                            productos.agregarCombo(comboCreacion);
+                            bandera93 = false;
+                        }
+                        else {
+                            System.out.println("Producto agregado al combo correctamente, vuelva a ingresar un nuevo producto");
+                        }
+
+                    }catch(ProductoNoEncontradoException exception){
+                        System.out.println("Ingrese el tipo de dato solicitado, reiniciando creacion de combo.....");
+                    }
+                }
+                while(bandera93);
+
+                break;
+            default:
+                throw new ProductoExistenteException("El parametro ingresado no corresponde a lo solicitado por consola, porfavor volver a ingresar");
+        }
+    }
+
+    //Case9
+    private static void removerCombo(GestorBebidas productos, Scanner input){
+        System.out.println("\nSelecciono la opcion 'Remover combo'");
+        System.out.println("--------------------------------------------------------------------------------");
+        boolean bandera9 = false;
+        do {
+            try {
+                productos.verListadoCombos();
+                System.out.println("Ingrese la posicion del combo que le gustaria eliminar: ");
+                int posicion = input.nextInt();
+
+                productos.removerCombo(posicion);
+                bandera9 = false;
+
+            } catch (InputMismatchException exception){
+                System.out.println("Ingrese el tipo de dato solicitado, reiniciando opcion 9........");}
+            bandera9 = true;
+
+        } while (bandera9);
+    }
+
 }

@@ -1,5 +1,7 @@
 package org.example.Combo;
 
+import org.example.Exception.ComboLimiteAlcanzadoException;
+import org.example.Exception.ProductoExistenteException;
 import org.example.Producto.Producto;
 
 public class Combo1x1 extends Combo{
@@ -10,20 +12,26 @@ public class Combo1x1 extends Combo{
     }
 
     @Override
-    protected boolean agregarCombo(Producto... productos) {
-        if (productos.length != 2){
-            System.out.println("Solo puedes agregar 2 productos (1 bebida con alcohol, 1 bebida con gas)");
-        }
-        Producto produ1 = productos[0];
-        Producto produ2 = productos[1];
+    public void agregarProducto(Producto unProducto, int cantidad) throws ProductoExistenteException {
+        validarCantidadDeProductos(2);
 
-        if ((produ1.esAlcoholica() && !produ2.esAlcoholica()) || (!produ1.esAlcoholica() && produ2.esAlcoholica())){
-            this.combos.add(produ1);
-            this.combos.add(produ2);
-            return true;
-        }
-        else{
-            return false;
-        }
+        if (cantidad >= 2){
+            throw new ComboLimiteAlcanzadoException("Este combo unicamnete admite 1 bebida de cada tipo");}
+
+        else if (this.productos.isEmpty()) {
+            this.productos.add(unProducto.recrearProductoParaCombo(cantidad));}
+
+        // Verifica si el producto complementario cumple con la regla de alcohol.
+        else if (esProductoComplementario(unProducto)) {
+            this.productos.add(unProducto.recrearProductoParaCombo(cantidad));}
+
+        else {
+            throw new ProductoExistenteException("Se necesita agregar una bebida complementaria");}
     }
+
+    //Metodo chris
+    private boolean esProductoComplementario(Producto unProducto) {
+        return this.productos.getFirst().esAlcoholica() != unProducto.esAlcoholica();
+    }
+
 }

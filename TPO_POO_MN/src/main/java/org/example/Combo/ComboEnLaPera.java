@@ -1,5 +1,6 @@
 package org.example.Combo;
 
+import org.example.Exception.ProductoExistenteException;
 import org.example.Producto.Producto;
 
 public class ComboEnLaPera extends Combo{
@@ -10,18 +11,31 @@ public class ComboEnLaPera extends Combo{
     }
 
     @Override
-    protected boolean agregarCombo(Producto... productos) {
-        if (productos.length <6 || productos.length > 10 ){
-            System.out.println("Porfavor ingresar entre 6 y 10 bebidas alcoholicas");
-            return false;
-        }
-        for (Producto producto : productos){
-            if (!producto.esAlcoholica()){
-                System.out.println("Este combo unicamente admite bebidas alcoholicas");
-                return false;
+    public void agregarProducto(Producto unProducto, int cantidad) {
+        Producto productoAgregar = unProducto.recrearProductoParaCombo(cantidad);
+        validarCantidadDeProductos(6);
+
+        if (productoAgregar.esAlcoholica()) {
+
+            //Contamos solo las bebidas alcoholicas
+            if (contarBebidasTipo(productoAgregar.esAlcoholica()) + productoAgregar.getCantidad() > 6) {
+                throw new ProductoExistenteException("El combo unicamente permite 6 productos");}
+
+            boolean productoExiste = false;
+            for (Producto productoIteracion : productos){
+                if (productoIteracion.getNombre().equals(productoAgregar.getNombre())){
+                    productoIteracion.setCantidad(productoIteracion.getCantidad() + productoAgregar.getCantidad());
+                    productoExiste = true;
+                    break;
+                }
             }
-            this.combos.add(producto);
+
+            if (!productoExiste) {
+                productos.add(productoAgregar);}
+
+        } else {
+            throw new ProductoExistenteException("El combo unicamente permite bebidas alcoholicas, esta bebida no se puede agregar al combo");
         }
-        return true;
     }
+
 }
